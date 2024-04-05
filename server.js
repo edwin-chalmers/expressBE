@@ -38,7 +38,7 @@ app.locals.spiders = [
 ]
 
 app.listen(app.get('port'), () => {
-    console.log(`${app.locals.title} is running on http://localhost:${app.get('port')}.`);
+    console.log(`${app.locals.title} is running on http://localhost:${app.get('port')}.`)
 });
 
 app.get('/', (request, response) => {
@@ -53,7 +53,7 @@ app.get('/api/v1/spiders', (request, response) => {
 })
 
 app.post('/api/v1/spiders', (request, response) => {
-    const id = Date.now()
+    const id = `${Date.now()}`
     const { name, location } = request.body
 
     app.locals.spiders.push({ id, name, location })
@@ -61,8 +61,8 @@ app.post('/api/v1/spiders', (request, response) => {
 })
 
 app.get('/api/v1/spiders/:id', (request, response) => {
-    const id = request.params.id
-    const spider = app.locals.spiderss.find(spider => spider.id === id)
+    const { id } = request.params
+    const spider = app.locals.spiders.find(spider => spider.id === id)
 
     spider
     ? response.status(200).json({ spider })
@@ -83,12 +83,12 @@ app.put('/api/v1/spiders/:id', (request, response) => {
 app.patch('/api/v1/spiders/:id', (request, response) => {
     const id = request.params.id
     const updates = request.body
-    const spider = app.locals.spiderss.find(spider => spider.id === id)
+    const spider = app.locals.spiders.find(spider => spider.id === id)
 
     spider ? (
         Object.keys(updates).forEach(key => spider[key] = updates[key]),
         response.status(200).json(spider)
-    ) : response.status(404)
+    ) : response.status(404).send('Spider not found')
 })
 
 app.delete('/api/v1/spiders/:id', (request, response) => {
@@ -98,5 +98,5 @@ app.delete('/api/v1/spiders/:id', (request, response) => {
     index !== -1 ? (
         app.locals.spiders.splice(index, 1),
         response.status(200).send(`Spider with id ${id} deleted`)
-    ) : response.status(404).send('Spider not found');
+    ) : response.status(404).send('Spider not found')
 });
